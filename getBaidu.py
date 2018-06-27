@@ -52,14 +52,27 @@ class GetBaidu:
             # 模拟一个浏览器访问百度, 不然不会重写到 https.
             req.add_header('User-Agent','Mozilla/5.0 (X11; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0')
             res = opener.open(req).getheaders()
-            realUrl = res[4][1]
-            isStatic = realUrl in '?'
-            # 
-            # 
+            for resOne in res:
+                if resOne[0] == "Location":
+                    realUrl = resOne[1]
+                    break
+            # realUrl = res[3][1]
+            isStatic = '伪静态'
+            if '?' in realUrl:
+            	isStatic = '非伪静态'
             # 
             # 
             title = a.xpath('string(.)').strip()
             file.setParams((title,url,realUrl,isStatic))
+
+    def getFirst(self):
+        """获取聚合结果"""
+        r = requests.get(self.serUrl,headers=httpHeaders,timeout=httpTimeout)
+        if r.status_code != 200:
+            file.setParams(("本次请求的状态是",r.status_code))           
+        html = etree.HTML(r.text)
+        return html
+
   
 class MyRedirectHandler(urllib.request.HTTPRedirectHandler):
     '''定义一个自己的头类, 继承HTTPRedirectHandler'''
@@ -75,15 +88,18 @@ httpTimeout = 5
 reqQuestion = input("Search:") 
 reqUrl =  'http://www.baidu.com/s?ie=utf-8&wd=' + reqQuestion
 nowPage = 0 #百度页面规则页面搜索条件
-resPage = 100;
 
-file = SetCsv(reqQuestion)
-file.setParams(("本次请求的url ",reqUrl))
 
+fhtml = GetBaidu(reqUrl).getFirst()
+getCount = fhtml.xpath('//body/div/div/div/div/div/div/span[@class="nums_text"]/text()')
+print(format(getCount))
+resPage = int(input("unit:"))
+file = SetCsv(reqQuestion) 
 myHandler = MyRedirectHandler()
 opener = urllib.request.build_opener(myHandler)
 while nowPage < resPage:
-    GetBaidu(reqUrl).setResult()
+    wgetUrl = reqUrl+'&pn='+str(nowPage)
+    GetBaidu(wgetUrl).setResult()
     sys.stdout.write('正在获取数据中 {0}/{1} 如果想停止，请按键 Ctrl + C \r'.format(nowPage , resPage))
     sys.stdout.flush()
     nowPage += 10
