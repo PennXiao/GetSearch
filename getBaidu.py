@@ -5,6 +5,7 @@ import sys
 import requests 
 from lxml import etree
 
+from urllib.parse import urlparse
 from urllib.request import urlopen
 from urllib.request import Request
 import urllib.request
@@ -46,6 +47,7 @@ class GetBaidu:
         
 
             url = a.xpath('string(@href)').strip()
+            title = a.xpath('string(.)').strip()
             # url = requests.get(url,headers=httpHeaders,timeout=httpTimeout).url
             # 
             req = Request(url)
@@ -61,9 +63,15 @@ class GetBaidu:
             if '?' in realUrl:
             	isStatic = '非伪静态'
             # 
+            self.serUrl = 'http://www.baidu.com/s?ie=utf-8&wd=site:'+urlparse(realUrl).netloc
+            sitehtml = self.getFirst();
+            getSite = sitehtml.xpath('//*[@id="content_left"]/div[1]/div/p[1]/b/text()')
+            if len(getSite):
+                getSite = getSite[0];
+            else:
+                getSite = sitehtml.xpath('//*[@id="1"]/div/div[1]/div/p[3]/span/b/text()')[0]
             # 
-            title = a.xpath('string(.)').strip()
-            file.setParams((title,url,realUrl,isStatic))
+            file.setParams((title,url,realUrl,isStatic,self.serUrl,getSite))
 
     def getFirst(self):
         """获取聚合结果"""
