@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['getBaidu.py'],
-             pathex=['C:\\Users\\Penn\\Documents\\GitHub\\GetSearch'],
+             pathex=['C:\\Users\\Penn\\Documents\\GitHub\\seotool'],
              binaries=[],
              datas=[],
              hiddenimports=[],
