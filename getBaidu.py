@@ -75,13 +75,16 @@ class GetBaidu:
             # if realUrl.endswith('/'):
             try:
                 webUrlGet = requests.get(baiduHashUrl,headers=HTTP_HEADERS,timeout=HTTP_TIMEOUT)
-            except requests.exceptions.Timeout as errt:
-                print ("Timeout Error:",errt)
+            except Exception as e:
+            # except requests.exceptions.Timeout as errt:
+            #     # print ("Timeout Error:",errt)
+            #     continue
+            # except requests.exceptions.ConnectionError as errconne:
                 continue
 
-            if webUrlGet.status_code != 200:
-                print(title,webUrlGet.status_code,baiduHashUrl) 
-                continue
+            # if webUrlGet.status_code != 200:
+            #     print(title,webUrlGet.status_code,baiduHashUrl) 
+            #     continue
             
         
             oneList = [0,1,2,3]
@@ -99,13 +102,10 @@ class GetBaidu:
                     getSite = sitehtml.xpath('//*[@id="1"]/div/div[1]/div/p[3]/span/b/text()')[0]
                 except Exception as e:
                     getSite = self.serUrl + "未取到 site"
- 
-
-            oneList[2] = getSite
-
-            webUrlGetHtml = etree.HTML(webUrlGet.text)
+            oneList[2] = getSite          
             # 验证sdk是否完整
             try:
+                webUrlGetHtml = etree.HTML(webUrlGet.text)
                 tidT = webUrlGetHtml.xpath("/html/head/title/text()") 
                 tidD = webUrlGetHtml.xpath("/html/head/meta[@name='description']/@content")
                 tidK = webUrlGetHtml.xpath("/html/head/meta[@name='keywords']/@content") 
@@ -113,9 +113,7 @@ class GetBaidu:
                     oneList[3] = "完整"
                 else:
                     oneList[3] = "不完整"
-            except IndexError:
-                oneList[3] = "不完整"
-            except TypeError:
+            except Exception as e:
                 oneList[3] = "不完整"              
             csone = tuple(oneList)
             file.setParams(csone);
@@ -147,4 +145,4 @@ while nowPage < resPage:
     biduList = GetBaidu(wgetUrl).getList() 
 file.closeFile()
 print('获取数据 {0}/{1} 完成 \r'.format(resPage , resPage))
- 
+input("任意按键关闭")
