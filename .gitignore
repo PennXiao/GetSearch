@@ -1,3 +1,5 @@
 
 *.csv
 *.spec
+build
+__pycache__
