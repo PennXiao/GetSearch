@@ -6,10 +6,11 @@
 
 #### Pyinstaller编译EXE命令
 ```
-pypinstaller -F /path/file.py #基本编译exe
+# pypinstaller -F /path/file.py #基本编译exe
 
-pyinstaller -F --icon=/path/file.ico --name=file /path/file.py #带有图标和包名的编译
+# pyinstaller -F --icon=/path/file.ico --name=file /path/file.py #带有图标和包名的编译
 
+# 参数
 -w, --windowed, --noconsole #屏蔽控制台
 
 
